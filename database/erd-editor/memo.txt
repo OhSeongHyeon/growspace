@@ -1,3 +1,0 @@
-erd-editor 는 초안 (코드 자동생성 별로임...)
-
-웹 erd - https://aquerytool.com/
