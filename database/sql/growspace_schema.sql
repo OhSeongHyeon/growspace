@@ -1,11 +1,11 @@
--- DROP DATABASE IF EXISTS growspace;
--- CREATE DATABASE growspace;
--- USE growspace;
+DROP DATABASE IF EXISTS growspace;
+CREATE DATABASE growspace;
+USE growspace;
 
 -- =================================
--- growspace project
--- growspace_1.sql
--- 쿼리는 이쪽에서 작성한다.
+-- growspace project: table ddl
+-- growspace_schema.sql
+-- 테이블 스키마
 -- =================================
 
 
