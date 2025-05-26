@@ -1,0 +1,41 @@
+<!-- templates/role-check.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>권한 계층 확인</title>
+</head>
+<body>
+<h2>권한 계층 테스트</h2>
+
+<div sec:authorize="isAuthenticated()">
+  <p><strong th:text="${'현재 사용자: ' + #authentication.name}"></strong></p>
+</div>
+
+<form th:action="@{/logout}" method="post">
+  <button type="submit">로그아웃</button>
+</form>
+
+<div sec:authorize="hasRole('ADMIN')">
+  <p>🔴 당신은 <strong>ADMIN</strong> 입니다. 모든 접근 권한이 있습니다.</p>
+</div>
+<div sec:authorize="hasRole('TEACHER')">
+  <p>🟠 당신은 <strong>TEACHER</strong> 권한이 있습니다.</p>
+</div>
+<div sec:authorize="hasRole('MENTOR')">
+  <p>🟡 당신은 <strong>MENTOR</strong> 권한이 있습니다.</p>
+</div>
+<div sec:authorize="hasRole('STUDENT')">
+  <p>🟢 당신은 <strong>STUDENT</strong> 권한이 있습니다.</p>
+</div>
+<div sec:authorize="hasRole('MEMBER')">
+  <p>🔵 당신은 <strong>MEMBER</strong> 권한이 있습니다.</p>
+</div>
+
+<div sec:authorize="isAnonymous()">
+  <p>🔒 로그인하지 않았습니다. <a th:href="@{/login}">로그인 하러 가기</a></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - Your App</title>
+    <!-- Tailwind CSS + DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-secondary/20 via-accent/10 to-primary/20">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="card w-full max-w-lg bg-base-100 shadow-2xl">
+            <div class="card-body">
+                <!-- 로고/헤더 -->
+                <div class="text-center mb-6">
+                    <div class="avatar placeholder mb-4">
+                        <div class="bg-secondary text-secondary-content rounded-full w-16">
+                            <i class="fas fa-user-plus text-2xl"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-base-content">회원가입</h1>
+                    <p class="text-base-content/70 mt-2">새 계정을 만들어보세요</p>
+                </div>
+
+                <!-- 에러 메시지 표시 -->
+                <div th:if="${error}" class="alert alert-error mb-4">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}">회원가입에 실패했습니다.</span>
+                </div>
+
+                <!-- 성공 메시지 표시 -->
+                <div th:if="${message}" class="alert alert-success mb-4">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${message}">성공 메시지</span>
+                </div>
+
+                <!-- 회원가입 폼 -->
+                <form th:action="@{/register}" th:object="${userForm}" method="post" class="space-y-4" id="registerForm">
+                    <!-- 이름 입력 -->
+                    <div class="form-control">
+                        <label class="label" for="fullName">
+                            <span class="label-text font-medium">
+                                <i class="fas fa-user mr-2"></i>이름 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="fullName"
+                            th:field="*{fullName}"
+                            placeholder="이름을 입력하세요"
+                            class="input input-bordered input-secondary w-full focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                            required
+                            autofocus
+                        />
+                        <div th:if="${#fields.hasErrors('fullName')}" class="label">
+                            <span class="label-text-alt text-error" th:errors="*{fullName}"></span>
+                        </div>
+                    </div>
+
+                    <!-- 사용자명 입력 -->
+                    <div class="form-control">
+                        <label class="label" for="username">
+                            <span class="label-text font-medium">
+                                <i class="fas fa-at mr-2"></i>사용자명 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username"
+                            th:field="*{username}"
+                            placeholder="사용자명을 입력하세요"
+                            class="input input-bordered input-secondary w-full focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                            required
+                            minlength="3"
+                            maxlength="20"
+                        />
+                        <div class="label">
+                            <span class="label-text-alt">3-20자의 영문, 숫자, 언더스코어만 가능</span>
+                            <span id="usernameCheck" class="label-text-alt"></span>
+                        </div>
+                        <div th:if="${#fields.hasErrors('username')}" class="label">
+                            <span class="label-text-alt text-error" th:errors="*{username}"></span>
+                        </div>
+                    </div>
+
+                    <!-- 이메일 입력 -->
+                    <div class="form-control">
+                        <label class="label" for="email">
+                            <span class="label-text font-medium">
+                                <i class="fas fa-envelope mr-2"></i>이메일 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email"
+                            th:field="*{email}"
+                            placeholder="이메일을 입력하세요"
+                            class="input input-bordered input-secondary w-full focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                            required
+                        />
+                        <div id="emailCheck" class="label">
+                            <span class="label-text-alt"></span>
+                        </div>
+                        <div th:if="${#fields.hasErrors('email')}" class="label">
+                            <span class="label-text-alt text-error" th:errors="*{email}"></span>
+                        </div>
+                    </div>
+
+                    <!-- 비밀번호 입력 -->
+                    <div class="form-control">
+                        <label class="label" for="password">
+                            <span class="label-text font-medium">
+                                <i class="fas fa-lock mr-2"></i>비밀번호 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="password"
+                                th:field="*{password}"
+                                placeholder="비밀번호를 입력하세요"
+                                class="input input-bordered input-secondary w-full pr-12 focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                                required
+                                minlength="8"
+                            />
+                            <button 
+                                type="button" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                onclick="togglePassword('password', 'passwordToggleIcon1')"
+                            >
+                                <i id="passwordToggleIcon1" class="fas fa-eye text-base-content/50 hover:text-base-content transition-colors"></i>
+                            </button>
+                        </div>
+                        <!-- 비밀번호 강도 표시 -->
+                        <div class="mt-2">
+                            <div class="text-xs mb-1">비밀번호 강도:</div>
+                            <progress id="passwordStrength" class="progress progress-error w-full" value="0" max="100"></progress>
+                            <div id="passwordStrengthText" class="text-xs text-base-content/70 mt-1"></div>
+                        </div>
+                        <div class="label">
+                            <span class="label-text-alt">최소 8자, 영문, 숫자, 특수문자 포함 권장</span>
+                        </div>
+                        <div th:if="${#fields.hasErrors('password')}" class="label">
+                            <span class="label-text-alt text-error" th:errors="*{password}"></span>
+                        </div>
+                    </div>
+
+                    <!-- 비밀번호 확인 -->
+                    <div class="form-control">
+                        <label class="label" for="confirmPassword">
+                            <span class="label-text font-medium">
+                                <i class="fas fa-lock mr-2"></i>비밀번호 확인 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                placeholder="비밀번호를 다시 입력하세요"
+                                class="input input-bordered input-secondary w-full pr-12 focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                                required
+                            />
+                            <button 
+                                type="button" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                onclick="togglePassword('confirmPassword', 'passwordToggleIcon2')"
+                            >
+                                <i id="passwordToggleIcon2" class="fas fa-eye text-base-content/50 hover:text-base-content transition-colors"></i>
+                            </button>
+                        </div>
+                        <div id="passwordMatch" class="label">
+                            <span class="label-text-alt"></span>
+                        </div>
+                    </div>
+
+                    <!-- 전화번호 입력 (선택사항) -->
+                    <div class="form-control">
+                        <label class="label" for="phoneNumber">
+                            <span class="label-text font-medium">
+                                <i class="fas fa-phone mr-2"></i>전화번호
+                            </span>
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phoneNumber"
+                            th:field="*{phoneNumber}"
+                            placeholder="010-1234-5678"
+                            class="input input-bordered input-secondary w-full focus:outline-none focus:ring-2 focus:ring-secondary/50"
+                            pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}"
+                        />
+                        <div th:if="${#fields.hasErrors('phoneNumber')}" class="label">
+                            <span class="label-text-alt text-error" th:errors="*{phoneNumber}"></span>
+                        </div>
+                    </div>
+
+                    <!-- 약관 동의 -->
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start">
+                            <input 
+                                type="checkbox" 
+                                id="termsAgree"
+                                name="termsAgree"
+                                class="checkbox checkbox-secondary mr-3"
+                                required
+                            />
+                            <span class="label-text">
+                                <a href="#" class="link link-secondary" onclick="openModal('termsModal')">이용약관</a>에 동의합니다 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start">
+                            <input 
+                                type="checkbox" 
+                                id="privacyAgree"
+                                name="privacyAgree"
+                                class="checkbox checkbox-secondary mr-3"
+                                required
+                            />
+                            <span class="label-text">
+                                <a href="#" class="link link-secondary" onclick="openModal('privacyModal')">개인정보처리방침</a>에 동의합니다 <span class="text-error">*</span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start">
+                            <input 
+                                type="checkbox" 
+                                id="marketingAgree"
+                                th:field="*{marketingAgree}"
+                                class="checkbox checkbox-secondary mr-3"
+                            />
+                            <span class="label-text">마케팅 정보 수신에 동의합니다 (선택)</span>
+                        </label>
+                    </div>
+
+                    <!-- 회원가입 버튼 -->
+                    <div class="form-control mt-6">
+                        <button type="submit" id="submitBtn" class="btn btn-secondary btn-block" disabled>
+                            <i class="fas fa-user-plus mr-2"></i>
+                            회원가입
+                        </button>
+                    </div>
+                </form>
+
+                <!-- 구분선 -->
+                <div class="divider my-6">또는</div>
+
+                <!-- 소셜 회원가입 버튼들 -->
+                <div class="space-y-3">
+                    <button class="btn btn-outline btn-block" onclick="socialRegister('google')">
+                        <i class="fab fa-google text-red-500 mr-2"></i>
+                        Google로 회원가입
+                    </button>
+                    <button class="btn btn-outline btn-block" onclick="socialRegister('github')">
+                        <i class="fab fa-github mr-2"></i>
+                        GitHub로 회원가입
+                    </button>
+                </div>
+
+                <!-- 로그인 링크 -->
+                <div class="text-center mt-6">
+                    <p class="text-base-content/70">
+                        이미 계정이 있으신가요?
+                        <a th:href="@{/login}" class="link link-secondary font-medium hover:link-hover">
+                            로그인
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 약관 모달 -->
+    <div id="termsModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">이용약관</h3>
+            <div class="py-4 max-h-96 overflow-y-auto">
+                <p class="text-sm leading-relaxed">
+                    제1조 (목적)<br>
+                    이 약관은 [회사명]이 제공하는 서비스의 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.<br><br>
+                    
+                    제2조 (정의)<br>
+                    1. "서비스"라 함은 회사가 제공하는 모든 서비스를 의미합니다.<br>
+                    2. "회원"이라 함은 회사의 서비스에 접속하여 이 약관에 따라 회사와 이용계약을 체결하고 회사가 제공하는 서비스를 이용하는 고객을 말합니다.<br><br>
+                    
+                    제3조 (약관의 효력 및 변경)<br>
+                    1. 이 약관은 서비스 화면에 게시하거나 기타의 방법으로 회원에게 공지함으로써 효력을 발생합니다.<br>
+                    2. 회사는 합리적인 사유가 발생할 경우에는 이 약관을 변경할 수 있습니다.<br><br>
+                    
+                    <!-- 더 많은 약관 내용... -->
+                </p>
+            </div>
+            <div class="modal-action">
+                <button class="btn" onclick="closeModal('termsModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 개인정보처리방침 모달 -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">개인정보처리방침</h3>
+            <div class="py-4 max-h-96 overflow-y-auto">
+                <p class="text-sm leading-relaxed">
+                    1. 개인정보의 처리목적<br>
+                    회사는 다음의 목적을 위하여 개인정보를 처리합니다. 처리하고 있는 개인정보는 다음의 목적 이외의 용도로는 이용되지 않으며, 이용 목적이 변경되는 경우에는 개인정보보호법 제18조에 따라 별도의 동의를 받는 등 필요한 조치를 이행할 예정입니다.<br><br>
+                    
+                    가. 홈페이지 회원 가입 및 관리<br>
+                    회원 가입 의사 확인, 회원제 서비스 제공에 따른 본인 식별·인증, 회원자격 유지·관리, 서비스 부정이용 방지, 만 14세 미만 아동의 개인정보처리 시 법정대리인의 동의여부 확인, 각종 고지·통지, 고충처리 목적으로 개인정보를 처리합니다.<br><br>
+                    
+                    나. 재화 또는 서비스 제공<br>
+                    서비스 제공, 계약서·청구서 발송, 콘텐츠 제공, 맞춤서비스 제공, 본인인증, 연령인증, 요금결제·정산, 채권추심 목적으로 개인정보를 처리합니다.<br><br>
+                    
+                    <!-- 더 많은 개인정보처리방침 내용... -->
+                </p>
+            </div>
+            <div class="modal-action">
+                <button class="btn" onclick="closeModal('privacyModal')">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 비밀번호 표시/숨기기 토글
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(iconId);
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // 비밀번호 강도 검사
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let feedback = [];
+
+            if (password.length >= 8) strength += 25;
+            else feedback.push('최소 8자');
+
+            if (/[a-z]/.test(password)) strength += 25;
+            else feedback.push('소문자');
+
+            if (/[A-Z]/.test(password)) strength += 25;
+            else feedback.push('대문자');
+
+            if (/[0-9]/.test(password)) strength += 25;
+            else feedback.push('숫자');
+
+            if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+            else feedback.push('특수문자');
+
+            const progressBar = document.getElementById('passwordStrength');
+            const strengthText = document.getElementById('passwordStrengthText');
+
+            progressBar.value = Math.min(strength, 100);
+            
+            if (strength < 50) {
+                progressBar.className = 'progress progress-error w-full';
+                strengthText.textContent = `약함 (필요: ${feedback.join(', ')})`;
+                strengthText.className = 'text-xs text-error mt-1';
+            } else if (strength < 75) {
+                progressBar.className = 'progress progress-warning w-full';
+                strengthText.textContent = '보통';
+                strengthText.className = 'text-xs text-warning mt-1';
+            } else {
+                progressBar.className = 'progress progress-success w-full';
+                strengthText.textContent = '강함';
+                strengthText.className = 'text-xs text-success mt-1';
+            }
+        }
+
+        // 비밀번호 일치 확인
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const matchDiv = document.getElementById('passwordMatch').querySelector('.label-text-alt');
+
+            if (confirmPassword === '') {
+                matchDiv.textContent = '';
+                return;
+            }
+
+            if (password === confirmPassword) {
+                matchDiv.textContent = '비밀번호가 일치합니다';
+                matchDiv.className = 'label-text-alt text-success';
+            } else {
+                matchDiv.textContent = '비밀번호가 일치하지 않습니다';
+                matchDiv.className = 'label-text-alt text-error';
+            }
+        }
+
+        // 사용자명 중복 확인 (실제로는 Ajax로 서버에 요청)
+        function checkUsernameAvailability(username) {
+            const checkDiv = document.getElementById('usernameCheck');
+            
+            if (username.length < 3) {
+                checkDiv.textContent = '';
+                return;
+            }
+
+            // 실제 구현에서는 Ajax로 서버에 중복 확인 요청
+            setTimeout(() => {
+                // 임시로 랜덤하게 결과 생성
+                const isAvailable = Math.random() > 0.3;
+                if (isAvailable) {
+                    checkDiv.textContent = '사용 가능한 사용자명입니다';
+                    checkDiv.className = 'label-text-alt text-success';
+                } else {
+                    checkDiv.textContent = '이미 사용 중인 사용자명입니다';
+                    checkDiv.className = 'label-text-alt text-error';
+                }
+            }, 500);
+        }
+
+        // 이메일 중복 확인
+        function checkEmailAvailability(email) {
+            const checkDiv = document.getElementById('emailCheck').querySelector('.label-text-alt');
+            
+            if (!email || !email.includes('@')) {
+                checkDiv.textContent = '';
+                return;
+            }
+
+            // 실제 구현에서는 Ajax로 서버에 중복 확인 요청
+            setTimeout(() => {
+                const isAvailable = Math.random() > 0.2;
+                if (isAvailable) {
+                    checkDiv.textContent = '사용 가능한 이메일입니다';
+                    checkDiv.className = 'label-text-alt text-success';
+                } else {
+                    checkDiv.textContent = '이미 등록된 이메일입니다';
+                    checkDiv.className = 'label-text-alt text-error';
+                }
+            }, 500);
+        }
+
+        // 폼 유효성 검사
+        function validateForm() {
+            const requiredFields = ['fullName', 'username', 'email', 'password'];
+            const termsAgree = document.getElementById('termsAgree').checked;
+            const privacyAgree = document.getElementById('privacyAgree').checked;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            let isValid = true;
+
+            // 필수 필드 확인
+            requiredFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    isValid = false;
+                }
+            });
+
+            // 비밀번호 일치 확인
+            if (password !== confirmPassword) {
+                isValid = false;
+            }
+
+            // 약관 동의 확인
+            if (!termsAgree || !privacyAgree) {
+                isValid = false;
+            }
+
+            // 제출 버튼 활성화/비활성화
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = !isValid;
+        }
+
+        // 소셜 회원가입
+        function socialRegister(provider) {
+            console.log(`${provider} 회원가입 요청`);
+            // 실제 구현 시에는 적절한 OAuth2 엔드포인트로 리다이렉트
+        }
+
+        // 모달 열기/닫기
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('modal-open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('modal-open');
+        }
+
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', function() {
+            // 비밀번호 강도 검사
+            document.getElementById('password').addEventListener('input', function(e) {
+                checkPasswordStrength(e.target.value);
+                checkPasswordMatch();
+                validateForm();
+            });
+
+            // 비밀번호 확인 검사
+            document.getElementById('confirmPassword').addEventListener('input', function() {
+                checkPasswordMatch();
+                validateForm();
+            });
+
+            // 사용자명 중복 확인
+            document.getElementById('username').addEventListener('input', function(e) {
+                checkUsernameAvailability(e.target.value);
+                validateForm();
+            });
+
+            // 이메일 중복 확인
+            document.getElementById('email').addEventListener('input', function(e) {
+                checkEmailAvailability(e.target.value);
+                validateForm();
+            });
+
+            // 전화번호 자동 포맷팅
+            document.getElementById('phoneNumber').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^0-9]/g, '');
+                if (value.length >= 3) {
+                    value = value.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3');
+                } else if (value.length >= 7) {
+                    value = value.replace(/(\d{3})(\d{4})/, '$1-$2');
+                }
+                e.target.value = value;
+            });
+
+            // 체크박스 변경 시 유효성 검사
+            ['termsAgree', 'privacyAgree'].forEach(id => {
+                document.getElementById(id).addEventListener('change', validateForm);
+            });
+
+            // 필수 필드 변경 시 유효성 검사
+            ['fullName', 'username', 'email'].forEach(id => {
+                document.getElementById(id).addEventListener('input', validateForm);
+            });
+
+            // 초기 유효성 검사
+            validateForm();
+        });
+
+        // 폼 제출 전 최종 검증
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('비밀번호가 일치하지 않습니다.');
+                return false;
+            }
+
+            if (password.length < 8) {
+                e.preventDefault();
+                alert('비밀번호는 최소 8자 이상이어야 합니다.');
+                return false;
+            }
+
+            if (!document.getElementById('termsAgree').checked || !document.getElementById('privacyAgree').checked) {
+                e.preventDefault();
+                alert('필수 약관에 동의해주세요.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
