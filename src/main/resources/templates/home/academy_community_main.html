@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" 
+      data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아카데미 커뮤니티</title>
+    <!-- CSRF 토큰 -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    
+    <!-- 공통 css -->
+    <link rel="stylesheet" th:href="@{/css/common.css}" />
+
+    <!-- 공통 js -->
+    <script th:src="@{/js/common.js}" defer="defer"></script>
+
+    <!-- 제이쿼리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- 폰트어썸 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 테일윈드 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+
+    <!-- 데이지UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.12.23/full.min.css" />
+</head>
+<body class="min-h-screen bg-base-200">
+    <!-- 네비게이션 바 -->
+    <div class="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+        <div class="navbar-start">
+            <!-- 모바일 드롭다운 메뉴 -->
+            <div class="dropdown lg:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost">
+                    <i class="fas fa-bars text-xl"></i>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-56">
+                    <li><a th:href="@{/}" class="font-medium"><i class="fas fa-home mr-2 text-primary"></i>홈</a></li>
+                    <li><a th:href="@{/board/notice}" class="font-medium"><i class="fas fa-bullhorn mr-2 text-warning"></i>공지사항</a></li>
+                    <li><a th:href="@{/board/free}" class="font-medium"><i class="fas fa-comments mr-2 text-info"></i>자유게시판</a></li>
+                    <li><a th:href="@{/board/qna}" class="font-medium"><i class="fas fa-question-circle mr-2 text-accent"></i>Q&A</a></li>
+                    <li><a th:href="@{/study}" class="font-medium"><i class="fas fa-users mr-2 text-success"></i>스터디</a></li>
+                    <li><a th:href="@{/gallery}" class="font-medium"><i class="fas fa-images mr-2 text-secondary"></i>갤러리</a></li>
+                </ul>
+            </div>
+            
+            <!-- 로고 -->
+            <a th:href="@{/}" class="btn btn-ghost text-xl font-bold text-primary hover:scale-105 transition-transform">
+                <i class="fas fa-graduation-cap mr-2"></i>
+                Dev Academy
+            </a>
+        </div>
+        
+        <!-- 데스크톱 메뉴 -->
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1 gap-1">
+                <li><a th:href="@{/}" class="btn btn-ghost btn-sm hover:btn-primary transition-all duration-300">
+                    <i class="fas fa-home mr-2"></i>홈</a></li>
+                <li><a th:href="@{/board/notice}" class="btn btn-ghost btn-sm hover:btn-warning transition-all duration-300">
+                    <i class="fas fa-bullhorn mr-2"></i>공지사항</a></li>
+                <li><a th:href="@{/board/free}" class="btn btn-ghost btn-sm hover:btn-info transition-all duration-300">
+                    <i class="fas fa-comments mr-2"></i>자유게시판</a></li>
+                <li><a th:href="@{/board/qna}" class="btn btn-ghost btn-sm hover:btn-accent transition-all duration-300">
+                    <i class="fas fa-question-circle mr-2"></i>Q&A</a></li>
+                <li><a th:href="@{/study}" class="btn btn-ghost btn-sm hover:btn-success transition-all duration-300">
+                    <i class="fas fa-users mr-2"></i>스터디</a></li>
+                <li><a th:href="@{/gallery}" class="btn btn-ghost btn-sm hover:btn-secondary transition-all duration-300">
+                    <i class="fas fa-images mr-2"></i>갤러리</a></li>
+            </ul>
+        </div>
+        
+        <div class="navbar-end gap-2">
+            <!-- 테마 토글 -->
+            <label class="swap swap-rotate">
+                <input type="checkbox" class="theme-controller" value="dark" />
+                <i class="fas fa-sun swap-off text-xl text-yellow-500"></i>
+                <i class="fas fa-moon swap-on text-xl text-blue-500"></i>
+            </label>
+            
+            <!-- 검색 -->
+            <div class="form-control">
+                <div class="input-group">
+                    <input type="text" placeholder="검색..." class="input input-bordered input-sm w-24 md:w-auto" />
+                    <button class="btn btn-square btn-sm">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 로그인/로그아웃 버튼 -->
+            <div class="hidden sm:flex gap-2">
+                <!-- 로그인 전 -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn btn-ghost btn-sm">
+                        <i class="fas fa-sign-in-alt mr-1"></i>로그인
+                    </a>
+                    <a th:href="@{/signup}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus mr-1"></i>회원가입
+                    </a>
+                </div>
+                
+                <!-- 로그인 후 -->
+                <div sec:authorize="isAuthenticated()" class="flex items-center gap-2">
+                    <div class="dropdown dropdown-end">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                            <div class="w-8 rounded-full">
+                                <div class="avatar placeholder">
+                                    <div class="bg-primary text-primary-content rounded-full w-8">
+                                        <span class="text-sm" sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1)}">U</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                            <li class="menu-title">
+                                <span sec:authentication="name">사용자님</span>
+                            </li>
+                            <li><a th:href="@{/profile}"><i class="fas fa-user mr-2"></i>프로필</a></li>
+                            <li><a th:href="@{/mypage}"><i class="fas fa-cog mr-2"></i>설정</a></li>
+                            <li><a th:href="@{/post/write}"><i class="fas fa-pen mr-2"></i>글쓰기</a></li>
+                            <div class="divider"></div>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="w-full">
+                                    <button type="submit" class="w-full text-left">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>로그아웃
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 모바일 사용자 메뉴 -->
+            <div class="dropdown dropdown-end sm:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-40">
+                    <div sec:authorize="!isAuthenticated()">
+                        <li><a th:href="@{/login}">로그인</a></li>
+                        <li><a th:href="@{/signup}">회원가입</a></li>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <li><a th:href="@{/profile}">프로필</a></li>
+                        <li><a th:href="@{/mypage}">설정</a></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit">로그아웃</button>
+                            </form>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero 섹션 -->
+    <div class="hero min-h-64 bg-gradient-to-br from-primary via-secondary to-accent relative overflow-hidden">
+        <div class="hero-overlay bg-opacity-30"></div>
+        <div class="hero-content text-center text-white z-10">
+            <div class="max-w-2xl">
+                <h1 class="mb-5 text-6xl font-bold animate-pulse">Welcome!</h1>
+                <p class="mb-8 text-xl font-medium">함께 성장하는 개발자 커뮤니티에 오신 것을 환영합니다.</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a th:href="@{/post/write}" class="btn btn-accent btn-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-pen mr-2"></i>새 글 작성
+                    </a>
+                    <a th:href="@{/study}" class="btn btn-outline btn-lg border-white text-white hover:bg-white hover:text-primary transition-all duration-300">
+                        <i class="fas fa-users mr-2"></i>스터디 참여
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- 장식용 요소 -->
+        <div class="absolute top-10 left-10 opacity-20">
+            <i class="fas fa-code text-6xl text-white"></i>
+        </div>
+        <div class="absolute bottom-10 right-10 opacity-20">
+            <i class="fas fa-laptop-code text-8xl text-white"></i>
+        </div>
+    </div>
+
+    <!-- 알림 섹션 -->
+    <div class="container mx-auto px-4 py-4">
+        <div class="alert alert-info shadow-lg">
+            <i class="fas fa-info-circle text-2xl"></i>
+            <div>
+                <h3 class="font-bold">새로운 소식!</h3>
+                <div class="text-sm">2024년 2분기 스터디 모집이 시작되었습니다. 지금 바로 참여해보세요!</div>
+            </div>
+            <button class="btn btn-sm btn-ghost">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <!-- 메인 게시판 -->
+            <div class="xl:col-span-3">
+                <!-- 탭 메뉴 -->
+                <div role="tablist" class="tabs tabs-lifted mb-6">
+                    <input type="radio" name="board_tabs" role="tab" class="tab font-semibold" aria-label="전체 게시글" checked />
+                    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                        <!-- 게시글 목록 -->
+                        <div class="space-y-4">
+                            <!-- 공지사항 핀 -->
+                            <div class="card bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-warning shadow-md">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div class="badge badge-warning badge-sm gap-1">
+                                                    <i class="fas fa-thumbtack"></i>공지
+                                                </div>
+                                                <h3 class="font-bold text-lg hover:text-primary cursor-pointer transition-colors">
+                                                    📢 커뮤니티 이용수칙 및 가이드라인 필독!
+                                                </h3>
+                                            </div>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-warning text-warning-content rounded-full w-6">
+                                                            <span class="text-xs">관</span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="font-medium">관리자</span>
+                                                </div>
+                                                <span>2024.05.20 09:00</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>342</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>12</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 인기 게시글 -->
+                            <div class="card bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-error shadow-md hover:shadow-lg transition-shadow">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div class="badge badge-error badge-sm gap-1 animate-pulse">
+                                                    <i class="fas fa-fire"></i>HOT
+                                                </div>
+                                                <h3 class="font-bold text-lg hover:text-primary cursor-pointer transition-colors">
+                                                    🔥 Spring Boot 3.2 + React 18 풀스택 프로젝트 팀원 모집!
+                                                </h3>
+                                            </div>
+                                            <p class="text-sm text-base-content/80 mb-2">Spring Security, JWT, Docker를 활용한 실무형 프로젝트입니다. 백엔드/프론트엔드 모두 환영!</p>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-primary text-primary-content rounded-full w-6">
+                                                            <span class="text-xs">김</span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="font-medium">김풀스택</span>
+                                                </div>
+                                                <span>2024.05.22 14:30</span>
+                                                <div class="flex gap-2">
+                                                    <div class="badge badge-outline badge-xs">#Spring</div>
+                                                    <div class="badge badge-outline badge-xs">#React</div>
+                                                    <div class="badge badge-outline badge-xs">#프로젝트</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>248</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>18</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span>32</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 일반 게시글들 -->
+                            <div th:each="post : ${posts}" class="card bg-base-100 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div th:if="${post.isNew}" class="badge badge-info badge-sm">NEW</div>
+                                                <div th:if="${post.hasAttachment}" class="badge badge-ghost badge-sm">
+                                                    <i class="fas fa-paperclip mr-1"></i>첨부
+                                                </div>
+                                                <h3 class="font-semibold hover:text-primary cursor-pointer transition-colors" 
+                                                    th:text="${post.title}">
+                                                    Java 알고리즘 스터디 일정 공유 및 팀원 모집
+                                                </h3>
+                                            </div>
+                                            <p th:if="${post.preview}" th:text="${post.preview}" class="text-sm text-base-content/70 mb-2">
+                                                코딩테스트 대비 알고리즘 스터디를 진행하고 있습니다. 매주 화/목 저녁 7시에 온라인으로...
+                                            </p>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-neutral text-neutral-content rounded-full w-6">
+                                                            <span class="text-xs" th:text="${post.author.substring(0,1)}">박</span>
+                                                        </div>
+                                                    </div>
+                                                    <span th:text="${post.author}" class="font-medium">박알고리즘</span>
+                                                </div>
+                                                <span th:text="${post.createdAt}">2024.05.22 13:15</span>
+                                                <div class="flex gap-1" th:if="${post.tags}">
+                                                    <div th:each="tag : ${post.tags}" th:text="${tag}" class="badge badge-outline badge-xs">#Java</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span th:text="${post.viewCount}">89</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span th:text="${post.commentCount}">7</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span th:text="${post.likeCount}">12</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 샘플 게시글들 -->
+                            <div class="card bg-base-100 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <h3 class="font-semibold hover:text-primary cursor-pointer transition-colors">
+                                                    JPA N+1 문제 해결 방법 정리
+                                                </h3>
+                                            </div>
+                                            <p class="text-sm text-base-content/70 mb-2">
+                                                JPA 사용 시 자주 발생하는 N+1 문제의 원인과 해결방법(Fetch Join, Entity Graph 등)을 정리했습니다.
+                                            </p>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-secondary text-secondary-content rounded-full w-6">
+                                                            <span class="text-xs">이</span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="font-medium">이제이피에이</span>
+                                                </div>
+                                                <span>2024.05.22 11:45</span>
+                                                <div class="flex gap-1">
+                                                    <div class="badge badge-outline badge-xs">#JPA</div>
+                                                    <div class="badge badge-outline badge-xs">#Spring</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>156</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>23</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span>18</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card bg-base-100 shadow hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div class="badge badge-accent badge-sm">질문</div>
+                                                <h3 class="font-semibold hover:text-primary cursor-pointer transition-colors">
+                                                    Docker 컨테이너 간 통신 설정 질문드려요
+                                                </h3>
+                                            </div>
+                                            <p class="text-sm text-base-content/70 mb-2">
+                                                Spring Boot 애플리케이션과 MySQL을 각각 다른 컨테이너로 실행할 때 연결이 안 되는 문제가 있습니다.
+                                            </p>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-accent text-accent-content rounded-full w-6">
+                                                            <span class="text-xs">최</span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="font-medium">최도커</span>
+                                                </div>
+                                                <span>2024.05.22 10:20</span>
+                                                <div class="flex gap-1">
+                                                    <div class="badge badge-outline badge-xs">#Docker</div>
+                                                    <div class="badge badge-outline badge-xs">#MySQL</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>94</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>11</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span>6</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 페이지네이션 -->
+                        <div class="flex justify-center mt-8">
+                            <div class="join">
+                                <button class="join-item btn btn-sm">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="join-item btn btn-sm btn-active">1</button>
+                                <button class="join-item btn btn-sm">2</button>
+                                <button class="join-item btn btn-sm">3</button>
+                                <button class="join-item btn btn-sm">4</button>
+                                <button class="join-item btn btn-sm">5</button>
+                                <button class="join-item btn btn-sm">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="radio" name="board_tabs" role="tab" class="tab font-semibold" aria-label="인기 글" />
+                    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                        <div class="text-center py-8">
+                            <i class="fas fa-fire text-4xl text-orange-500 mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">인기 게시글</h3>
+                            <p class="text-base-content/70">주간 인기 게시글을 확인해보세요!</p>
+                        </div>
+                    </div>
+
+                    <input type="radio" name="board_tabs" role="tab" class="tab font-semibold" aria-label="Q&A" />
+                    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                        <div class="text-center py-8">
+                            <i class="fas fa-question-circle text-4xl text-info mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">질문과 답변</h3>
+                            <p class="text-base-content/70">궁금한 것을 자유롭게 질문해보세요!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사이드바 -->
+            <div class="xl:col-span-1 space-y-6">
+                <!-- 빠른 글쓰기 -->
+                <div class="card bg-gradient-to-br from-primary to-secondary shadow-lg">
+                    <div class="card-body text-center text-white">
+                        <h3 class="card-title justify-center

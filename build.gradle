@@ -30,7 +30,11 @@ dependencies {
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
     implementation 'io.github.cdimascio:dotenv-java:3.2.0' // .env
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' // html 헤더 푸터 재사용 레이아웃
-    implementation 'org.springframework.security:spring-security-crypto' // Spring Security Crypto 모듈만 별도 사용
+//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//    implementation 'org.springframework.security:spring-security-crypto' // Spring Security Crypto 모듈만 별도 사용
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'

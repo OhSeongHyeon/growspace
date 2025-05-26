@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아카데미 커뮤니티</title>
+    <!-- 공통 css -->
+    <link rel="stylesheet" th:href="@{/css/common.css}" />
+
+    <!-- 공통 js -->
+    <script th:src="@{/js/common.js}" defer="defer"></script>
+
+    <!-- 제이쿼리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- 폰트어썸 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- 폰트어썸 FREE 아이콘 리스트 : https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free -->
+
+    <!-- 테일윈드 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.1.4/tailwind.min.css">
+    <!-- 테일윈드 치트시트 : https://nerdcave.com/tailwind-cheat-sheet -->
+
+    <!-- 데이지ui - https://daisyui.com/?utm_source=cdnjs&utm_medium=cdnjs_link&utm_campaign=cdnjs_library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.12.23/full.min.css" />
+    <!-- 데이지ui 컴포넌트 : https://daisyui.com/components/ -->
+</head>
+<body class="min-h-screen bg-base-200">
+    <!-- 네비게이션 바 -->
+    <div class="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+        <div class="navbar-start">
+            <div class="dropdown lg:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost">
+                    <i class="fas fa-bars text-xl"></i>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a href="#" class="font-medium"><i class="fas fa-home mr-2"></i>홈</a></li>
+                    <li><a href="#" class="font-medium"><i class="fas fa-bullhorn mr-2"></i>공지사항</a></li>
+                    <li><a href="#" class="font-medium"><i class="fas fa-comments mr-2"></i>자유게시판</a></li>
+                    <li><a href="#" class="font-medium"><i class="fas fa-question-circle mr-2"></i>Q&A</a></li>
+                    <li><a href="#" class="font-medium"><i class="fas fa-users mr-2"></i>스터디</a></li>
+                    <li><a href="#" class="font-medium"><i class="fas fa-images mr-2"></i>갤러리</a></li>
+                </ul>
+            </div>
+            <a href="#" class="btn btn-ghost text-xl font-bold text-primary">
+                <i class="fas fa-graduation-cap mr-2"></i>
+                아카데미 커뮤니티
+            </a>
+        </div>
+        
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1 gap-2">
+                <li><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-home mr-2"></i>홈</a></li>
+                <li><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-bullhorn mr-2"></i>공지사항</a></li>
+                <li><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-comments mr-2"></i>자유게시판</a></li>
+                <li><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-question-circle mr-2"></i>Q&A</a></li>
+                <li><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-users mr-2"></i>스터디</a></li>
+                <li><a href="#" class="btn btn-ghost btn-sm"><i class="fas fa-images mr-2"></i>갤러리</a></li>
+            </ul>
+        </div>
+        
+        <div class="navbar-end gap-2">
+            <!-- 테마 토글 -->
+            <label class="swap swap-rotate">
+                <input type="checkbox" class="theme-controller" value="dark" />
+                <i class="fas fa-sun swap-off fill-current w-4 h-4"></i>
+                <i class="fas fa-moon swap-on fill-current w-4 h-4"></i>
+            </label>
+            
+            <!-- 검색 -->
+            <div class="form-control">
+                <input type="text" placeholder="검색..." class="input input-bordered input-sm w-24 md:w-auto" />
+            </div>
+            
+            <!-- 로그인/회원가입 -->
+            <div class="hidden sm:flex gap-2">
+                <button class="btn btn-ghost btn-sm" onclick="login_modal.showModal()">
+                    <i class="fas fa-sign-in-alt mr-1"></i>로그인
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="signup_modal.showModal()">
+                    <i class="fas fa-user-plus mr-1"></i>회원가입
+                </button>
+            </div>
+            
+            <!-- 모바일 로그인 버튼 -->
+            <div class="dropdown dropdown-end sm:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-32">
+                    <li><a onclick="login_modal.showModal()">로그인</a></li>
+                    <li><a onclick="signup_modal.showModal()">회원가입</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero 섹션 -->
+    <div class="hero min-h-48 bg-gradient-to-r from-primary to-secondary">
+        <div class="hero-content text-center text-primary-content">
+            <div class="max-w-md">
+                <h1 class="mb-5 text-5xl font-bold">Welcome!</h1>
+                <p class="mb-5">함께 성장하는 개발자 커뮤니티에 오신 것을 환영합니다.</p>
+                <button class="btn btn-accent" onclick="write_modal.showModal()">
+                    <i class="fas fa-pen mr-2"></i>새 글 작성
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <!-- 메인 게시판 -->
+            <div class="xl:col-span-3">
+                <!-- 탭 메뉴 -->
+                <div role="tablist" class="tabs tabs-lifted mb-6">
+                    <input type="radio" name="board_tabs" role="tab" class="tab" aria-label="전체" checked />
+                    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                        <!-- 게시글 목록 -->
+                        <div class="space-y-4">
+                            <!-- 인기 게시글 -->
+                            <div class="card bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div class="badge badge-error badge-sm">HOT</div>
+                                                <h3 class="font-bold text-lg hover:text-primary cursor-pointer transition-colors">
+                                                    🔥 Spring Boot 마스터클래스 프로젝트 팀원 모집!
+                                                </h3>
+                                            </div>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-neutral text-neutral-content rounded-full w-6">
+                                                            <span class="text-xs">김</span>
+                                                        </div>
+                                                    </div>
+                                                    <span>김개발</span>
+                                                </div>
+                                                <span>2024.05.22 14:30</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="stat-value text-sm flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>124</span>
+                                            </div>
+                                            <div class="stat-value text-sm flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>8</span>
+                                            </div>
+                                            <div class="stat-value text-sm flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span>15</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 일반 게시글들 -->
+                            <div th:each="post : ${posts}" class="card bg-base-100 shadow hover:shadow-md transition-shadow">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div th:if="${post.isNew}" class="badge badge-info badge-sm">NEW</div>
+                                                <div th:if="${post.hasAttachment}" class="badge badge-ghost badge-sm">
+                                                    <i class="fas fa-paperclip mr-1"></i>첨부
+                                                </div>
+                                                <h3 class="font-semibold hover:text-primary cursor-pointer transition-colors" 
+                                                    th:text="${post.title}">
+                                                    Java 알고리즘 스터디 일정 공유
+                                                </h3>
+                                            </div>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-neutral text-neutral-content rounded-full w-6">
+                                                            <span class="text-xs" th:text="${post.author.substring(0,1)}">박</span>
+                                                        </div>
+                                                    </div>
+                                                    <span th:text="${post.author}">박알고</span>
+                                                </div>
+                                                <span th:text="${post.createdAt}">2024.05.22 13:15</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span th:text="${post.viewCount}">67</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span th:text="${post.commentCount}">3</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span th:text="${post.likeCount}">7</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 샘플 게시글들 -->
+                            <div class="card bg-base-100 shadow hover:shadow-md transition-shadow">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <h3 class="font-semibold hover:text-primary cursor-pointer transition-colors">
+                                                    데이터베이스 설계 패턴 질문드립니다
+                                                </h3>
+                                            </div>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-secondary text-secondary-content rounded-full w-6">
+                                                            <span class="text-xs">이</span>
+                                                        </div>
+                                                    </div>
+                                                    <span>이디비</span>
+                                                </div>
+                                                <span>2024.05.22 11:45</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>89</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>12</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span>4</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card bg-base-100 shadow hover:shadow-md transition-shadow">
+                                <div class="card-body p-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <div class="badge badge-accent badge-sm">질문</div>
+                                                <h3 class="font-semibold hover:text-primary cursor-pointer transition-colors">
+                                                    React vs Vue.js 어떤 것을 선택해야 할까요?
+                                                </h3>
+                                            </div>
+                                            <div class="flex items-center gap-4 text-sm text-base-content/70">
+                                                <div class="flex items-center gap-1">
+                                                    <div class="avatar placeholder">
+                                                        <div class="bg-accent text-accent-content rounded-full w-6">
+                                                            <span class="text-xs">최</span>
+                                                        </div>
+                                                    </div>
+                                                    <span>최프론</span>
+                                                </div>
+                                                <span>2024.05.22 10:20</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 text-sm">
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-eye text-base-content/50"></i>
+                                                <span>156</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-comments text-base-content/50"></i>
+                                                <span>18</span>
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <span>23</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 페이지네이션 -->
+                        <div class="flex justify-center mt-8">
+                            <div class="join">
+                                <button class="join-item btn btn-sm">«</button>
+                                <button class="join-item btn btn-sm btn-active">1</button>
+                                <button class="join-item btn btn-sm">2</button>
+                                <button class="join-item btn btn-sm">3</button>
+                                <button class="join-item btn btn-sm">4</button>
+                                <button class="join-item btn btn-sm">»</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="radio" name="board_tabs" role="tab" class="tab" aria-label="공지사항" />
+                    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                        공지사항 내용
+                    </div>
+
+                    <input type="radio" name="board_tabs" role="tab" class="tab" aria-label="Q&A" />
+                    <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                        Q&A 내용
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사이드바 -->
+            <div class="xl:col-span-1 space-y-6">
+                <!-- 공지사항 -->
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-lg">
+                            <i class="fas fa-bullhorn text-warning"></i>
+                            공지사항
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="border-l-4 border-primary pl-3">
+                                <p class="font-medium text-sm hover:text-primary cursor-pointer transition-colors">
+                                    2024년 하반기 교육과정 안내
+                                </p>
+                                <p class="text-xs text-base-content/60">2024.05.20</p>
+                            </div>
+                            <div class="border-l-4 border-secondary pl-3">
+                                <p class="font-medium text-sm hover:text-primary cursor-pointer transition-colors">
+                                    커뮤니티 이용수칙 업데이트
+                                </p>
+                                <p class="text-xs text-base-content/60">2024.05.18</p>
+                            </div>
+                            <div class="border-l-4 border-accent pl-3">
+                                <p class="font-medium text-sm hover:text-primary cursor-pointer transition-colors">
+                                    정기 점검 안내 (5월 25일)
+                                </p>
+                                <p class="text-xs text-base-content/60">2024.05.15</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 온라인 사용자 -->
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-lg">
+                            <div class="indicator">
+                                <span class="indicator-item badge badge-success badge-xs"></span>
+                                <i class="fas fa-users text-success"></i>
+                            </div>
+                            온라인 (23명)
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="badge badge-outline gap-1">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                김개발
+                            </div>
+                            <div class="badge badge-outline gap-1">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                박알고
+                            </div>
+                            <div class="badge badge-outline gap-1">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                이디비
+                            </div>
+                            <div class="badge badge-outline gap-1">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                최프론
+                            </div>
+                            <div class="badge badge-outline gap-1">
+                                <div class="w-2 h-2 bg-success rounded-full"></div>
+                                정코테
+                            </div>
+                            <div class="badge badge-neutral">+18명</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 통계 -->
+                <div class="stats stats-vertical shadow">
+                    <div class="stat">
+                        <div class="stat-figure text-primary">
+                            <i class="fas fa-users text-2xl"></i>
+                        </div>
+                        <div class="stat-title">전체 회원</div>
+                        <div class="stat-value text-primary">1,247</div>
+                        <div class="stat-desc">21% 증가</div>
+                    </div>
+                    
+                    <div class="stat">
+                        <div class="stat-figure text-secondary">
+                            <i class="fas fa-comments text-2xl"></i>
+                        </div>
+                        <div class="stat-title">총 게시글</div>
+                        <div class="stat-value text-secondary">4,892</div>
+                        <div class="stat-desc">↗︎ 400 (22%)</div>
+                    </div>
+                    
+                    <div class="stat">
+                        <div class="stat-figure text-accent">
+                            <i class="fas fa-eye text-2xl"></i>
+                        </div>
+                        <div class="stat-title">오늘 방문자</div>
+                        <div class="stat-value text-accent">892</div>
+                        <div class="stat-desc">↗︎ 90 (14%)</div>
+                    </div>
+                </div>
+
+                <!-- 인기 태그 -->
+                <div class="card bg-base-100 shadow">
+                    <div class="card-body">
+                        <h3 class="card-title text-lg">
+                            <i class="fas fa-tags text-info"></i>
+                            인기 태그
+                        </h3>
+                        <div class="flex flex-wrap gap-2">
+                            <div class="badge badge-primary">#Java</div>
+                            <div class="badge badge-secondary">#Spring</div>
+                            <div class="badge badge-accent">#React</div>
+                            <div class="badge badge-info">#알고리즘</div>
+                            <div class="badge badge-success">#코딩테스트</div>
+                            <div class="badge badge-warning">#스터디</div>
+                            <div class="badge badge-error">#프로젝트</div>
+                            <div class="badge badge-neutral">#취업</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 로그인 모달 -->
+    <dialog id="login_modal" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">
+                <i class="fas fa-sign-in-alt mr-2"></i>로그인
+            </h3>
+            <form class="space-y-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">아이디</span>
+                    </label>
+                    <input type="text" placeholder="아이디를 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">비밀번호</span>
+                    </label>
+                    <input type="password" placeholder="비밀번호를 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label cursor-pointer justify-start gap-2">
+                        <input type="checkbox" class="checkbox checkbox-sm" />
+                        <span class="label-text">로그인 상태 유지</span>
+                    </label>
+                </div>
+                <div class="form-control mt-6">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt mr-2"></i>로그인
+                    </button>
+                </div>
+            </form>
+            <div class="divider">OR</div>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="btn btn-outline">
+                    <i class="fab fa-google mr-2"></i>Google
+                </button>
+                <button class="btn btn-outline">
+                    <i class="fab fa-github mr-2"></i>GitHub
+                </button>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 회원가입 모달 -->
+    <dialog id="signup_modal" class="modal">
+        <div class="modal-box">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">
+                <i class="fas fa-user-plus mr-2"></i>회원가입
+            </h3>
+            <form class="space-y-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">아이디</span>
+                    </label>
+                    <input type="text" placeholder="아이디를 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">비밀번호</span>
+                    </label>
+                    <input type="password" placeholder="비밀번호를 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">비밀번호 확인</span>
+                    </label>
+                    <input type="password" placeholder="비밀번호를 다시 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">이메일</span>
+                    </label>
+                    <input type="email" placeholder="이메일을 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">닉네임</span>
+                    </label>
+                    <input type="text" placeholder="닉네임을 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control mt-6">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-user-plus mr-2"></i>회원가입
+                    </button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- 글쓰기 모달 -->
+    <dialog id="write_modal" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <h3 class="font-bold text-lg mb-4">
+                <i class="fas fa-pen mr-2"></i>새 글 작성
+            </h3>
+            <form class="space-y-4">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">카테고리</span>
+                    </label>
+                    <select class="select select-bordered">
+                        <option disabled selected>카테고리를 선택하세요</option>
+                        <option>자유게시판</option>
+                        <option>질문과 답변</option>
+                        <option>스터디 모집</option>
+                        <option>프로젝트 모집</option>
+                    </select>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">제목</span>
+                    </label>
+                    <input type="text" placeholder="제목을 입력하세요" class="input input-bordered" required />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">내용</span>
+                    </label>
+                    <textarea class="textarea textarea-bordered h-48" placeholder="내용을 입력하세요" required></textarea>
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">태그</span>
+                    </label>
+                    <input type="text" placeholder="#태그1 #태그2 #태그3" class="input input-bordered" />
+                </div>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">파일 첨부</span>
+                    </label>
+                    <input type="file" class="file-input file-input-bordered" multiple />
+                </div>
+                <div class="modal-action">
+                    <button type="button" class

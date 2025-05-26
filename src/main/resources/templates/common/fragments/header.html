@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:fragment="headerFragment">
+
+<header>
+    <!-- 네비게이션 바 -->
+    <div class="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+        <div class="navbar-start">
+            <!-- 모바일 드롭다운 메뉴 -->
+            <div class="dropdown lg:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost">
+                    <i class="fas fa-bars text-xl"></i>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-56">
+                    <li><a th:href="@{/}" class="font-medium"><i class="fas fa-home mr-2 text-primary"></i>홈</a></li>
+                    <li><a th:href="@{/board/notice}" class="font-medium"><i class="fas fa-bullhorn mr-2 text-warning"></i>공지사항</a></li>
+                    <li><a th:href="@{/board/free}" class="font-medium"><i class="fas fa-comments mr-2 text-info"></i>자유게시판</a></li>
+                    <li><a th:href="@{/board/qna}" class="font-medium"><i class="fas fa-question-circle mr-2 text-accent"></i>Q&A</a></li>
+                    <li><a th:href="@{/study}" class="font-medium"><i class="fas fa-users mr-2 text-success"></i>스터디</a></li>
+                </ul>
+            </div>
+            
+            <!-- 로고 -->
+            <a th:href="@{/}" class="btn btn-ghost text-xl font-bold text-primary hover:scale-105 transition-transform">
+                <i class="fas fa-graduation-cap mr-2"></i>
+                growspace
+            </a>
+        </div>
+        
+        <!-- 데스크톱 메뉴 -->
+        <div class="navbar-center hidden lg:flex">
+            <ul class="menu menu-horizontal px-1 gap-1">
+                <li><a th:href="@{/}" class="btn btn-ghost btn-sm hover:btn-primary transition-all duration-300">
+                    <i class="fas fa-home mr-2"></i>홈</a></li>
+                <li><a th:href="@{/board/notice}" class="btn btn-ghost btn-sm hover:btn-warning transition-all duration-300">
+                    <i class="fas fa-bullhorn mr-2"></i>공지사항</a></li>
+                <li><a th:href="@{/board/free}" class="btn btn-ghost btn-sm hover:btn-info transition-all duration-300">
+                    <i class="fas fa-comments mr-2"></i>자유게시판</a></li>
+                <li><a th:href="@{/board/qna}" class="btn btn-ghost btn-sm hover:btn-accent transition-all duration-300">
+                    <i class="fas fa-question-circle mr-2"></i>Q&A</a></li>
+                <li><a th:href="@{/study}" class="btn btn-ghost btn-sm hover:btn-success transition-all duration-300">
+                    <i class="fas fa-users mr-2"></i>스터디</a></li>
+            </ul>
+        </div>
+        
+        <div class="navbar-end gap-2">
+            <!-- 테마 토글 -->
+            <label class="swap swap-rotate">
+                <input type="checkbox" class="theme-controller" value="dark" />
+                <i class="fas fa-sun swap-off text-xl text-yellow-500"></i>
+                <i class="fas fa-moon swap-on text-xl text-blue-500"></i>
+            </label>
+            
+            <!-- 검색 -->
+            <div class="form-control">
+                <div class="input-group">
+                    <input type="text" placeholder="검색..." class="input input-bordered input-sm w-24 md:w-auto" />
+                    <button class="btn btn-square btn-sm">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 로그인/로그아웃 버튼 -->
+            <div class="hidden sm:flex gap-2">
+                <!-- 로그인 전 -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a th:href="@{/login}" class="btn btn-ghost btn-sm">
+                        <i class="fas fa-sign-in-alt mr-1"></i>로그인
+                    </a>
+                    <a th:href="@{/signup}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus mr-1"></i>회원가입
+                    </a>
+                </div>
+                
+                <!-- 로그인 후 -->
+                <div sec:authorize="isAuthenticated()" class="flex items-center gap-2">
+                    <div class="dropdown dropdown-end">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                            <div class="w-8 rounded-full">
+                                <div class="avatar placeholder">
+                                    <div class="bg-primary text-primary-content rounded-full w-8">
+                                        <span class="text-sm" sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1)}">U</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+                            <li class="menu-title">
+                                <span sec:authentication="name">사용자님</span>
+                            </li>
+                            <li><a th:href="@{/profile}"><i class="fas fa-user mr-2"></i>프로필</a></li>
+                            <li><a th:href="@{/mypage}"><i class="fas fa-cog mr-2"></i>설정</a></li>
+                            <li><a th:href="@{/post/write}"><i class="fas fa-pen mr-2"></i>글쓰기</a></li>
+                            <div class="divider"></div>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="w-full">
+                                    <button type="submit" class="w-full text-left">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>로그아웃
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 모바일 사용자 메뉴 -->
+            <div class="dropdown dropdown-end sm:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <ul class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-40">
+                    <div sec:authorize="!isAuthenticated()">
+                        <li><a th:href="@{/login}">로그인</a></li>
+                        <li><a th:href="@{/signup}">회원가입</a></li>
+                    </div>
+                    <div sec:authorize="isAuthenticated()">
+                        <li><a th:href="@{/profile}">프로필</a></li>
+                        <li><a th:href="@{/mypage}">설정</a></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post">
+                                <button type="submit">로그아웃</button>
+                            </form>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+</th:block>
+</html>

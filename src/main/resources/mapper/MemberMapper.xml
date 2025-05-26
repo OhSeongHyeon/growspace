@@ -1,4 +1,107 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.growspace.community.mapper.MemberMapper" >
+<mapper namespace="com.growspace.community.mapper.MemberMapper">
+    <select id="findByLoginId" parameterType="string" resultType="MemberModel">
+        SELECT
+            member_id,
+            role_id,
+            profile_image_id,
+            login_id,
+            login_pw_hash,
+            member_name,
+            nick_name,
+            email,
+            grow_point,
+            created_at,
+            updated_at,
+            deleted_flag
+        FROM
+            gs_member
+        WHERE
+            login_id = #{loginId}
+    </select>
+
+    <!-- ResultMap 정의 -->
+    <resultMap id="memberResultMap" type="MemberModel">
+        <!-- gs_member 테이블 컬럼 매핑 -->
+        <id property="memberId" column="m_member_id" />
+        <result property="roleId" column="m_role_id" />
+        <result property="profileImageId" column="m_profile_image_id" />
+        <result property="loginId" column="m_login_id" />
+        <result property="loginPwHash" column="m_login_pw_hash" />
+        <result property="memberName" column="m_member_name" />
+        <result property="nickName" column="m_nick_name" />
+        <result property="email" column="m_email" />
+        <result property="growPoint" column="m_grow_point" />
+        <result property="createdAt" column="m_created_at" jdbcType="TIMESTAMP" />
+        <result property="updatedAt" column="m_updated_at" jdbcType="TIMESTAMP" />
+        <result property="deletedFlag" column="m_deleted_flag" jdbcType="BOOLEAN" />
+
+        <!-- gs_role 테이블 매핑 (RoleDTO) -->
+        <association property="role" javaType="RoleModel">
+            <id property="roleId" column="r_role_id" />
+            <result property="roleName" column="r_role_name" />
+            <result property="authLv" column="r_auth_lv" />
+            <result property="createdAt" column="r_created_at" jdbcType="TIMESTAMP" />
+            <result property="updatedAt" column="r_updated_at" jdbcType="TIMESTAMP" />
+            <result property="deletedFlag" column="r_deleted_flag" jdbcType="BOOLEAN" />
+        </association>
+
+        <!-- gs_profile_image 테이블 매핑 (ProfileImageDTO) -->
+        <association property="profileImage" javaType="ProfileImageModel">
+            <id property="profileImageId" column="p_profile_image_id" />
+            <result property="fileName" column="p_file_name" />
+            <result property="filePath" column="p_file_path" />
+            <result property="fileUuid" column="p_file_uuid" />
+            <result property="fileSize" column="p_file_size" />
+            <result property="fileType" column="p_file_type" />
+            <result property="createdAt" column="p_created_at" jdbcType="TIMESTAMP" />
+            <result property="updatedAt" column="p_updated_at" jdbcType="TIMESTAMP" />
+            <result property="deletedFlag" column="p_deleted_flag" jdbcType="BOOLEAN" />
+        </association>
+    </resultMap>
+
+    <!-- SELECT 쿼리 -->
+    <select id="selectByLoginIdMemberWithJoins" parameterType="string" resultMap="memberResultMap">
+        SELECT
+            m.member_id AS m_member_id
+        ,   m.role_id AS m_role_id
+        ,   m.profile_image_id AS m_profile_image_id
+        ,   m.login_id AS m_login_id
+        ,   m.login_pw_hash AS m_login_pw_hash
+        ,   m.member_name AS m_member_name
+        ,   m.nick_name AS m_nick_name
+        ,   m.email AS m_email
+        ,   m.grow_point AS m_grow_point
+        ,   m.created_at AS m_created_at
+        ,   m.updated_at AS m_updated_at
+        ,   m.deleted_flag AS m_deleted_flag
+        ,   r.role_id AS r_role_id
+        ,   r.role_name AS r_role_name
+        ,   r.auth_lv AS r_auth_lv
+        ,   r.created_at AS r_created_at
+        ,   r.updated_at AS r_updated_at
+        ,   r.deleted_flag AS r_deleted_flag
+        ,   p.profile_image_id AS p_profile_image_id
+        ,   p.file_name AS p_file_name
+        ,   p.file_path AS p_file_path
+        ,   p.file_uuid AS p_file_uuid
+        ,   p.file_size AS p_file_size
+        ,   p.file_type AS p_file_type
+        ,   p.created_at AS p_created_at
+        ,   p.updated_at AS p_updated_at
+        ,   p.deleted_flag AS p_deleted_flag
+        FROM
+            gs_member m
+        LEFT JOIN
+            gs_role r
+        ON
+            m.role_id = r.role_id
+        LEFT JOIN
+            gs_profile_image p
+        ON
+            m.profile_image_id = p.profile_image_id
+        WHERE
+            m.login_id = #{loginId}
+    </select>
 </mapper>
