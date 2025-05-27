@@ -5,23 +5,121 @@
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%highlight([%-5level]) [%d{yy-MM-dd HH:mm:ss}] [%thread] %cyan(%logger{36})\n - %msg%n</pattern>
+            <charset>UTF-8</charset>
+            <!--<pattern>%highlight([%-5level]) [%d{yy-MM-dd HH:mm:ss}] - [%thread] %cyan(%logger{36})\n : %msg %n</pattern>-->
+            <pattern>%highlight([%-5level]) [%d{yy-MM-dd HH:mm:ss}] - [%thread] %cyan(%logger{35}) : %msg %n</pattern>
         </encoder>
     </appender>
 
+    <!--
     <logger name="jdbc" level="OFF"/>
     <logger name="jdbc.connection" level="OFF"/>
-    <logger name="jdbc.sqlonly" level="OFF"/>  <!-- 파라미터를 셋팅해서 출력-->
-    <logger name="jdbc.sqltiming" level="DEBUG"/>  <!--쿼리 실행 속도 표시-->
-    <logger name="jdbc.resultsettable" level="OFF"/>  <!-- 결과값을 보여줌-->
+    <logger name="jdbc.sqlonly" level="OFF"/>
+    <logger name="jdbc.sqltiming" level="DEBUG"/>
+    <logger name="jdbc.resultsettable" level="OFF"/>
     <logger name="jdbc.audit" level="OFF"/>
     <logger name="jdbc.resultset" level="OFF"/>
     <logger name="log4jdbc.debug" level="OFF"/>
     <logger name="org.apache.ibatis" level="DEBUG"/>
     <logger name="org.mybatis" level="DEBUG"/>
+    -->
+
+    <logger name="jdbc" level="DEBUG"/>
+    <springProfile name="default,dev">
+        <logger name="jdbc.connection" level="OFF"/>
+    </springProfile>
+    <springProfile name="prod">
+        <logger name="jdbc.connection" level="INFO"/>
+    </springProfile>
+    <logger name="jdbc.sqlonly" level="OFF"/><!-- 파라미터를 셋팅해서 출력-->
+    <!--
+    <springProfile name="default,dev">
+        <logger name="jdbc.sqlonly" level="DEBUG"/>
+    </springProfile>
+    <springProfile name="prod">
+        <logger name="jdbc.sqlonly" level="OFF"/>
+    </springProfile>
+    -->
+    <logger name="jdbc.sqltiming" level="INFO"/><!--쿼리 실행 속도 표시-->
+    <logger name="jdbc.resultsettable" level="OFF"/><!-- 결과값을 보여줌-->
+    <logger name="jdbc.audit" level="OFF"/>
+    <logger name="jdbc.resultset" level="ERROR"/>
+    <logger name="log4jdbc.debug" level="OFF"/>
+    <!--
+    <logger name="org.apache.ibatis" level="DEBUG"/>
+    <logger name="org.mybatis" level="DEBUG"/>
+    -->
+    <logger name="org.mybatis" level="TRACE"/>
+    <logger name="org.springframework" level="INFO"/>
+
+    <!--
+    <springProfile name="default">
+        <logger name="jdbc.connection" level="ERROR"/>
+        <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <prudent>false</prudent>
+            <file>/growspace-log/growspace-local.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>/growspace-log/growspace-local.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>15</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{yyyy:MM:dd HH:mm:ss.SSS} %-5level - [%thread] %logger{35} : %msg %n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+
+    <springProfile name="dev">
+        <logger name="jdbc.connection" level="ERROR"/>
+        <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <prudent>false</prudent>
+            <file>/growspace-log/growspace-dev.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>/growspace-log/growspace-dev.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>15</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{yyyy:MM:dd HH:mm:ss.SSS} %-5level - [%thread] %logger{35} : %msg %n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="jdbc.connection" level="WARN"/>
+        <appender name="logFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <prudent>false</prudent>
+            <file>/growspace-log/growspace-prod.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>/growspace-log/growspace-prod.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+                <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                    <maxFileSize>100MB</maxFileSize>
+                </timeBasedFileNamingAndTriggeringPolicy>
+                <maxHistory>15</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{yyyy:MM:dd HH:mm:ss.SSS} %-5level - [%thread] %logger{35} : %msg %n</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+    -->
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <!-- log file  -->
+    <!--
+    <root level="INFO">
+        <appender-ref ref="logFile" />
+    </root>
+    -->
 
 </configuration>

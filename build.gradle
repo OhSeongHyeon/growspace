@@ -28,10 +28,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
-    implementation 'io.github.cdimascio:dotenv-java:3.2.0' // .env
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' // html 헤더 푸터 재사용 레이아웃
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16' //https://mvnrepository.com/artifact/org.bgee.log4jdbc-log4j2/log4jdbc-log4j2-jdbc4.1
+    implementation 'io.github.cdimascio:dotenv-java:3.2.0' //.env | https://github.com/cdimascio/dotenv-java
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' //thymeleaf html 레이아웃, 헤더푸터 fragment layout
 //    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.security:spring-security-crypto' // Spring Security Crypto 모듈만 별도 사용
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
     testImplementation 'org.springframework.security:spring-security-test'
