@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <th:block th:replace="~{common/fragments/head-lib :: head-lib-fragment}"></th:block>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+<div class="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-xl">
+    <div class="text-center">
+        <h1 class="text-3xl font-bold text-gray-900">로그인</h1>
+        <p class="text-sm text-gray-600 mt-1">GrowSpace에 오신 것을 환영합니다</p>
+    </div>
+
+    <form th:action="@{/login}" method="post" class="space-y-5">
+        <div>
+            <label for="username" class="block text-sm font-medium text-gray-700">아이디</label>
+            <input
+                    type="text"
+                    name="username"
+                    id="username"
+                    th:value="${param.username}"
+                    required
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="아이디 입력"/>
+        </div>
+
+        <div class="relative">
+            <label for="password" class="block text-sm font-medium text-gray-700">비밀번호</label>
+            <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    required
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="비밀번호 입력"/>
+            <button type="button" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
+                    onclick="togglePassword()">
+                👁️
+            </button>
+        </div>
+
+        <!-- 에러 메시지 표시 영역 -->
+        <div th:if="${param.error}" class="text-red-500 text-sm">
+            로그인 정보가 올바르지 않습니다.
+        </div>
+
+        <div>
+            <button type="submit"
+                    class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition">
+                로그인
+            </button>
+        </div>
+    </form>
+
+    <div class="text-center text-sm text-gray-500">
+        계정이 없으신가요?
+        <a href="/register" class="text-blue-600 hover:underline">회원가입</a>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+    }
+</script>
+</body>
+</html>

@@ -10,9 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("/role-check")
+    @GetMapping("/role")
     public String showRoles() {
         return "test/role-check";
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "test/test";
+    }
+
 
 }

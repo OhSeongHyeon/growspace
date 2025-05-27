@@ -6,27 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>아카데미 커뮤니티</title>
-    <!-- CSRF 토큰 -->
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    
-    <!-- 공통 css -->
-    <link rel="stylesheet" th:href="@{/css/common.css}" />
-
-    <!-- 공통 js -->
-    <script th:src="@{/js/common.js}" defer="defer"></script>
-
-    <!-- 제이쿼리 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-    <!-- 폰트어썸 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- 테일윈드 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-
-    <!-- 데이지UI -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/daisyui/4.12.23/full.min.css" />
+    <th:block th:replace="~{common/fragments/head-lib :: head-lib-fragment}"></th:block>
 </head>
 <body class="min-h-screen bg-base-200">
     <!-- 네비게이션 바 -->
