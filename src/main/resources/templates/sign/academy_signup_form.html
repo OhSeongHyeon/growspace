@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학원 커뮤니티 - 회원가입</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5.0.38/daisyui.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.7/dist/index.global.min.js" defer="defer"></script>
+</head>
+<body>
+    <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+        <div class="card w-full max-w-md shadow-2xl bg-base-100">
+            <div class="card-body">
+                <!-- 헤더 -->
+                <div class="text-center mb-6">
+                    <div class="avatar placeholder mb-4">
+                        <div class="bg-primary text-primary-content rounded-full w-16">
+                            <i class="fas fa-graduation-cap text-2xl"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-2xl font-bold text-base-content">학원 커뮤니티</h1>
+                    <p class="text-base-content/70">새로운 계정을 만들어주세요</p>
+                </div>
+
+                <!-- 회원가입 폼 -->
+                <form id="signupForm" class="space-y-4" action="/member/signup" method="post">
+                    <!-- 로그인 아이디 -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">로그인 아이디</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-200"><i class="fas fa-user-circle"></i></span>
+                            <input type="text" name="loginId" class="input input-bordered w-full" placeholder="영문, 숫자 조합 4-20자" maxlength="64" required>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm mt-2" onclick="checkDuplicate('loginId')">
+                            <i class="fas fa-check"></i> 중복확인
+                        </button>
+                        <div id="loginIdMessage" class="text-sm mt-1"></div>
+                    </div>
+
+                    <!-- 비밀번호 -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">비밀번호</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-200"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="loginPw" class="input input-bordered w-full" placeholder="8자 이상 입력해주세요" required>
+                        </div>
+                        <label class="label">
+                            <span class="label-text-alt text-base-content/60">영문, 숫자, 특수문자 조합 8자 이상</span>
+                        </label>
+                    </div>
+
+                    <!-- 비밀번호 확인 -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">비밀번호 확인</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-200"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="loginPwConfirm" class="input input-bordered w-full" placeholder="비밀번호를 다시 입력해주세요" required>
+                        </div>
+                    </div>
+
+                    <!-- 이름 -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">이름 (실명)</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-200"><i class="fas fa-user"></i></span>
+                            <input type="text" name="memberName" class="input input-bordered w-full" placeholder="실명을 입력해주세요" maxlength="32" required>
+                        </div>
+                    </div>
+
+                    <!-- 닉네임 -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">닉네임</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-200"><i class="fas fa-smile"></i></span>
+                            <input type="text" name="nickName" class="input input-bordered w-full" placeholder="커뮤니티에서 사용할 닉네임" maxlength="16" required>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm mt-2" onclick="checkDuplicate('nickName')">
+                            <i class="fas fa-check"></i> 중복확인
+                        </button>
+                        <div id="nickNameMessage" class="text-sm mt-1"></div>
+                    </div>
+
+                    <!-- 이메일 -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">이메일</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="bg-base-200"><i class="fas fa-envelope"></i></span>
+                            <input type="email" name="email" class="input input-bordered w-full" placeholder="example@email.com" maxlength="128" required>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm mt-2" onclick="checkDuplicate('email')">
+                            <i class="fas fa-check"></i> 중복확인
+                        </button>
+                        <div id="emailMessage" class="text-sm mt-1"></div>
+                    </div>
+
+                    <!-- 약관 동의 -->
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start">
+                            <input type="checkbox" name="terms" class="checkbox checkbox-primary mr-3" required>
+                            <span class="label-text">
+                                <a href="#" class="link link-primary">이용약관</a> 및 
+                                <a href="#" class="link link-primary">개인정보처리방침</a>에 동의합니다
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- 마케팅 동의 (선택) -->
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start">
+                            <input type="checkbox" name="marketing" class="checkbox checkbox-secondary mr-3">
+                            <span class="label-text">마케팅 정보 수신에 동의합니다 (선택)</span>
+                        </label>
+                    </div>
+
+                    <!-- 제출 버튼 -->
+                    <div class="form-control mt-6">
+                        <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                            <i class="fas fa-user-plus mr-2"></i>
+                            회원가입
+                        </button>
+                        <div class="text-center mt-2">
+                            <small class="text-base-content/60">모든 중복확인을 완료해야 가입할 수 있습니다</small>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 로그인 링크 -->
+                <div class="divider">또는</div>
+                <div class="text-center">
+                    <p class="text-base-content/70">
+                        이미 계정이 있으신가요? 
+                        <a href="#" class="link link-primary font-semibold">로그인하기</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 성공/에러 모달 -->
+    <div id="resultModal" class="modal">
+        <div class="modal-box">
+            <h3 id="modalTitle" class="font-bold text-lg"></h3>
+            <p id="modalMessage" class="py-4"></p>
+            <div class="modal-action">
+                <button class="btn" onclick="closeModal()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 중복 확인 상태 관리
+        let duplicateChecks = {
+            loginId: false,
+            nickName: false,
+            email: false
+        };
+
+        // 중복 확인 함수
+        async function checkDuplicate(fieldName) {
+            const input = document.querySelector(`input[name="${fieldName}"]`);
+            const value = input.value.trim();
+            const messageDiv = document.getElementById(`${fieldName}Message`);
+            
+            if (!value) {
+                showFieldMessage(fieldName, '값을 입력해주세요.', 'error');
+                return;
+            }
+            
+            // 입력값 유효성 검사
+            if (fieldName === 'loginId' && !isValidLoginId(value)) {
+                showFieldMessage(fieldName, '영문, 숫자 조합 4-20자로 입력해주세요.', 'error');
+                return;
+            }
+            
+            if (fieldName === 'nickName' && value.length < 2) {
+                showFieldMessage(fieldName, '닉네임은 2자 이상 입력해주세요.', 'error');
+                return;
+            }
+            
+            try {
+                // 실제로는 서버 API 호출
+                // const response = await fetch(`/api/member/check-duplicate`, {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ field: fieldName, value: value })
+                // });
+                // const result = await response.json();
+                
+                // 시뮬레이션: 일부 값들을 중복으로 처리
+                const isDuplicate = ['admin', 'test', 'user'].includes(value.toLowerCase());
+                
+                if (isDuplicate) {
+                    showFieldMessage(fieldName, '이미 사용중인 값입니다.', 'error');
+                    duplicateChecks[fieldName] = false;
+                } else {
+                    showFieldMessage(fieldName, '사용 가능합니다.', 'success');
+                    duplicateChecks[fieldName] = true;
+                }
+                
+                updateSubmitButton();
+                
+            } catch (error) {
+                showFieldMessage(fieldName, '중복 확인 중 오류가 발생했습니다.', 'error');
+                duplicateChecks[fieldName] = false;
+            }
+        }
+        
+        // 필드 메시지 표시
+        function showFieldMessage(fieldName, message, type) {
+            const messageDiv = document.getElementById(`${fieldName}Message`);
+            messageDiv.textContent = message;
+            messageDiv.className = `text-sm mt-1 ${type === 'success' ? 'text-success' : 'text-error'}`;
+        }
+        
+        // 로그인 아이디 유효성 검사
+        function isValidLoginId(loginId) {
+            const regex = /^[a-zA-Z0-9]{4,20}$/;
+            return regex.test(loginId);
+        }
+        
+        // 제출 버튼 활성화/비활성화
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            const allChecked = Object.values(duplicateChecks).every(check => check === true);
+            submitBtn.disabled = !allChecked;
+        }
+        
+        // 입력값 변경시 중복확인 상태 리셋
+        document.querySelectorAll('input[name="loginId"], input[name="nickName"], input[name="email"]').forEach(input => {
+            input.addEventListener('input', function() {
+                const fieldName = this.name;
+                duplicateChecks[fieldName] = false;
+                document.getElementById(`${fieldName}Message`).textContent = '';
+                updateSubmitButton();
+            });
+        });
+
+        // 폼 제출 처리
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const loginPw = formData.get('loginPw');
+            const loginPwConfirm = formData.get('loginPwConfirm');
+            
+            // 중복확인 완료 체크
+            if (!Object.values(duplicateChecks).every(check => check === true)) {
+                showModal('오류', '모든 항목의 중복확인을 완료해주세요.', 'error');
+                return;
+            }
+            
+            // 비밀번호 일치 확인
+            if (loginPw !== loginPwConfirm) {
+                showModal('오류', '비밀번호가 일치하지 않습니다.', 'error');
+                return;
+            }
+            
+            // 비밀번호 유효성 검사
+            if (!isValidPassword(loginPw)) {
+                showModal('오류', '비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.', 'error');
+                return;
+            }
+            
+            // 약관 동의 확인
+            if (!formData.get('terms')) {
+                showModal('오류', '이용약관에 동의해주세요.', 'error');
+                return;
+            }
+            
+            // 폼 데이터 수집 (DB 스키마에 맞춰)
+            const memberData = {
+                loginId: formData.get('loginId'),
+                loginPw: loginPw,  // 실제로는 서버에서 bcrypt 해싱
+                memberName: formData.get('memberName'),
+                nickName: formData.get('nickName'),
+                email: formData.get('email'),
+                termsAgreed: formData.get('terms') === 'on',
+                marketingAgreed: formData.get('marketing') === 'on'
+            };
+            
+            console.log('회원가입 데이터:', memberData);
+            
+            // 실제로는 이 부분에서 폼을 서버로 제출
+            // this.submit(); 
+            
+            // 성공 메시지 표시 (데모용)
+            showModal('가입 완료', '회원가입이 성공적으로 완료되었습니다!', 'success');
+        });
+        
+        // 비밀번호 유효성 검사
+        function isValidPassword(password) {
+            const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+            return regex.test(password);
+        }
+        
+        // 모달 표시
+        function showModal(title, message, type = 'info') {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('resultModal').classList.add('modal-open');
+        }
+        
+        // 모달 닫기
+        function closeModal() {
+            document.getElementById('resultModal').classList.remove('modal-open');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title>회원가입</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 공통 라이브러리 프래그먼트 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5.0.38/daisyui.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.7/dist/index.global.min.js"
+        defer="defer"></script>
+</head>
+
+<body>
+    <div class="min-h-screen bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20">
+        <div class="min-h-screen flex items-center justify-center p-4">
+            <div class="card w-full max-w-lg bg-base-100 shadow-2xl">
+                <div class="card-body">
+                    <!-- 상단 로고 버튼 -->
+                    <div class="text-center mb-6">
+                        <a th:href="@{/}"
+                            class="inline-flex items-center justify-center gap-2 mb-3 btn btn-ghost text-2xl font-bold hover:scale-105 transition-transform">
+                            <i class="fas fa-graduation-cap text-base-content"></i>
+                            <span class="tracking-tight text-base-content">GrowSpace</span>
+                        </a>
+                        <h1 class="text-3xl font-bold text-base-content">회원가입</h1>
+                    </div>
+
+                    <!-- 글로벌 에러 -->
+                    <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-error mb-4">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:each="err : ${#fields.globalErrors()}" th:text="${err}"></span>
+                    </div>
+
+                    <!-- 가입 폼 -->
+                    <form th:action="@{/register}" th:object="${registerForm}" method="post" class="space-y-4">
+                        <!-- 로그인 ID -->
+                        <div class="form-control">
+                            <label class="label" for="loginId"><span class="label-text font-medium"><i
+                                        class="fas fa-user mr-2"></i>아이디</span></label>
+                            <input type="text" id="loginId" th:field="*{loginId}" placeholder="아이디 (4~20자)"
+                                class="input input-bordered w-full" />
+                            <p th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}"
+                                class="text-sm text-error mt-1"></p>
+                        </div>
+
+                        <!-- 비밀번호 -->
+                        <div class="form-control">
+                            <label class="label" for="password"><span class="label-text font-medium"><i
+                                        class="fas fa-lock mr-2"></i>비밀번호</span></label>
+                            <input type="password" id="password" th:field="*{password}" placeholder="비밀번호 (6~30자)"
+                                class="input input-bordered w-full" />
+                            <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                                class="text-sm text-error mt-1"></p>
+                        </div>
+
+                        <!-- 비밀번호 확인 -->
+                        <div class="form-control">
+                            <label class="label" for="confirmPassword"><span class="label-text font-medium"><i
+                                        class="fas fa-lock mr-2"></i>비밀번호 확인</span></label>
+                            <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                                placeholder="비밀번호 확인" class="input input-bordered w-full" />
+                            <p th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                                class="text-sm text-error mt-1"></p>
+                        </div>
+
+                        <!-- 이메일 -->
+                        <div class="form-control">
+                            <label class="label" for="email"><span class="label-text font-medium"><i
+                                        class="fas fa-envelope mr-2"></i>이메일</span></label>
+                            <input type="email" id="email" th:field="*{email}" placeholder="email@example.com"
+                                class="input input-bordered w-full" />
+                            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                                class="text-sm text-error mt-1"></p>
+                        </div>
+
+                        <!-- 닉네임 -->
+                        <div class="form-control">
+                            <label class="label" for="nickName"><span class="label-text font-medium"><i
+                                        class="fas fa-id-badge mr-2"></i>닉네임</span></label>
+                            <input type="text" id="nickName" th:field="*{nickName}" placeholder="닉네임 (1~16자)"
+                                class="input input-bordered w-full" />
+                            <p th:if="${#fields.hasErrors('nickName')}" th:errors="*{nickName}"
+                                class="text-sm text-error mt-1"></p>
+                        </div>
+
+                        <!-- 가입 버튼 -->
+                        <div class="form-control mt-6">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-user-plus mr-1"></i>회원가입
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- 뒤로가기 -->
+                    <div class="text-center mt-4">
+                        <a th:href="@{/login}" class="link link-primary text-sm hover:underline">이미 계정이 있으신가요? 로그인</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

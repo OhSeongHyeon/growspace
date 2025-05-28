@@ -6,7 +6,7 @@
 
 <header>
     <!-- 네비게이션 바 -->
-    <div class="navbar bg-base-100 shadow-lg sticky top-0 z-50">
+    <div class="navbar bg-base-100 border-b sticky top-0 z-50">
         <div class="navbar-start">
             <!-- 모바일 드롭다운 메뉴 -->
             <div class="dropdown lg:hidden">
@@ -18,37 +18,61 @@
                     <li><a th:href="@{/board/notice}" class="font-medium"><i class="fas fa-bullhorn mr-2 text-warning"></i>공지사항</a></li>
                     <li><a th:href="@{/board/free}" class="font-medium"><i class="fas fa-comments mr-2 text-info"></i>자유게시판</a></li>
                     <li><a th:href="@{/board/qna}" class="font-medium"><i class="fas fa-question-circle mr-2 text-accent"></i>Q&A</a></li>
-                    <li><a th:href="@{/study}" class="font-medium"><i class="fas fa-users mr-2 text-success"></i>스터디</a></li>
+                    <li><a th:href="@{/board/class}" class="font-medium"><i class="fas fa-keyboard mr-2 text-accent"></i>클래스</a></li>
+                    <li><a th:href="@{/board/study}" class="font-medium"><i class="fas fa-users mr-2 text-success"></i>스터디</a></li>
+                    <li><a th:href="@{#}" class="font-medium"><i class="fas fa-envelope mr-2 text-info"></i>메세지</a></li>
+                    <li><a th:href="@{#}" class="font-medium"><i class="fas fa-comments mr-2 text-success"></i>그룹채팅</a></li>
+                    <li><a th:href="@{#}" class="font-medium"><i class="fas fa-bell mr-2 text-warning"></i>알림</a></li>
                 </ul>
             </div>
             
             <!-- 로고 -->
-            <a th:href="@{/}" class="btn btn-ghost text-xl font-bold text-primary hover:scale-105 transition-transform">
-                <i class="fas fa-graduation-cap mr-2"></i>
-                growspace
+            <a th:href="@{/}" class="inline-flex items-center gap-2 hover:scale-105 transition-transform">
+                <i class="fas fa-graduation-cap text-primary text-2xl"></i>
+                <span class="font-bold text-lg tracking-tight">GrowSpace</span>
             </a>
         </div>
         
         <!-- 데스크톱 메뉴 -->
         <div class="navbar-center hidden lg:flex">
             <ul class="menu menu-horizontal px-1 gap-1">
-                <li><a th:href="@{/}" class="btn btn-ghost btn-sm hover:btn-primary transition-all duration-300">
-                    <i class="fas fa-home mr-2"></i>홈</a></li>
-                <li><a th:href="@{/board/notice}" class="btn btn-ghost btn-sm hover:btn-warning transition-all duration-300">
-                    <i class="fas fa-bullhorn mr-2"></i>공지사항</a></li>
-                <li><a th:href="@{/board/free}" class="btn btn-ghost btn-sm hover:btn-info transition-all duration-300">
-                    <i class="fas fa-comments mr-2"></i>자유게시판</a></li>
-                <li><a th:href="@{/board/qna}" class="btn btn-ghost btn-sm hover:btn-accent transition-all duration-300">
-                    <i class="fas fa-question-circle mr-2"></i>Q&A</a></li>
-                <li><a th:href="@{/study}" class="btn btn-ghost btn-sm hover:btn-success transition-all duration-300">
-                    <i class="fas fa-users mr-2"></i>스터디</a></li>
+                <li>
+                    <a th:href="@{/}" class="btn btn-ghost btn-sm hover:btn-primary transition-all duration-300">
+                        <i class="fas fa-home mr-2 text-primary"></i>홈
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/board/notice}" class="btn btn-ghost btn-sm hover:btn-warning transition-all duration-300">
+                        <i class="fas fa-bullhorn mr-2 text-warning"></i>공지사항
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/board/free}" class="btn btn-ghost btn-sm hover:btn-info transition-all duration-300">
+                        <i class="fas fa-comments mr-2 text-info"></i>자유게시판
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/board/qna}" class="btn btn-ghost btn-sm hover:btn-accent transition-all duration-300">
+                        <i class="fas fa-question-circle mr-2 text-accent"></i>Q&A
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/board/class}" class="btn btn-ghost btn-sm hover:btn-accent transition-all duration-300">
+                        <i class="fas fa-keyboard mr-2 text-accent"></i>클래스
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/board/study}" class="btn btn-ghost btn-sm hover:btn-success transition-all duration-300">
+                        <i class="fas fa-users mr-2 text-success"></i>스터디
+                    </a>
+                </li>
             </ul>
         </div>
-        
+
         <div class="navbar-end gap-2">
             <!-- 테마 토글 -->
             <label class="swap swap-rotate">
-                <input type="checkbox" class="theme-controller" value="dark" />
+                <input id="themeToggleInput" type="checkbox" class="theme-controller" value="dark" />
                 <i class="fas fa-sun swap-off text-xl text-yellow-500"></i>
                 <i class="fas fa-moon swap-on text-xl text-blue-500"></i>
             </label>
@@ -70,13 +94,27 @@
                     <a th:href="@{/login}" class="btn btn-ghost btn-sm">
                         <i class="fas fa-sign-in-alt mr-1"></i>로그인
                     </a>
-                    <a th:href="@{/signup}" class="btn btn-primary btn-sm">
+                    <a th:href="@{/register}" class="btn btn-primary btn-sm">
                         <i class="fas fa-user-plus mr-1"></i>회원가입
                     </a>
                 </div>
                 
                 <!-- 로그인 후 -->
                 <div sec:authorize="isAuthenticated()" class="flex items-center gap-2">
+                    <!-- 알림 아이콘 영역 -->
+                    <div class="flex gap-2 items-center">
+                        <button class="btn btn-ghost btn-circle relative" title="메세지">
+                            <i class="fas fa-envelope mr-2 text-info"></i>
+                        </button>
+                        <button class="btn btn-ghost btn-circle relative" title="그룹채팅">
+                            <i class="fas fa-comments mr-2 text-success"></i>
+                        </button>
+                        <button class="btn btn-ghost btn-circle relative" title="알림">
+                            <i class="fas fa-bell mr-2 text-warning"></i>
+                            <!-- 알림 배지 예시 -->
+                            <span class="badge badge-xs badge-primary absolute top-0 right-0"></span>
+                        </button>
+                    </div>
                     <div class="dropdown dropdown-end">
                         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                             <div class="w-8 rounded-full">
@@ -93,8 +131,6 @@
                             </li>
                             <li><a th:href="@{/profile}"><i class="fas fa-user mr-2"></i>프로필</a></li>
                             <li><a th:href="@{/mypage}"><i class="fas fa-cog mr-2"></i>설정</a></li>
-                            <li><a th:href="@{/post/write}"><i class="fas fa-pen mr-2"></i>글쓰기</a></li>
-                            <div class="divider"></div>
                             <li>
                                 <form th:action="@{/logout}" method="post" class="w-full">
                                     <button type="submit" class="w-full text-left">

@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
 
 <head>
-    <!-- <title>페이지</title> -->
-    <th:block layout:fragment="title"></th:block>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <title>페이지</title> -->
+    <th:block layout:fragment="title"></th:block>
 
     <th:block th:replace="~{common/fragments/head-lib :: head-lib-fragment}"></th:block>
 
@@ -16,11 +17,15 @@
 
 <body>
 
+<div class="min-h-screen flex flex-col">
     <th:block th:replace="~{common/fragments/header :: header-fragment}"></th:block>
-    
-    <th:block layout:fragment="body-content"></th:block>
-    
+
+    <main class="flex-1">
+        <th:block layout:fragment="body-content"></th:block>
+    </main>
+
     <th:block th:replace="~{common/fragments/footer :: footer-fragment}"></th:block>
+</div>
 
 </body>
 

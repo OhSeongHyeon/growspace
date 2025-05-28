@@ -1,44 +1,124 @@
-<!-- templates/role-check.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>권한 계층 확인</title>
+    <meta charset="UTF-8">
+    <title>권한 계층 확인</title>
 
-  <th:block th:replace="~{common/fragments/head-lib :: head-lib-fragment}"></th:block>
+    <th:block th:replace="~{common/fragments/head-lib :: head-lib-fragment}"></th:block>
 
 </head>
 <body>
-<h2>권한 계층 테스트</h2>
+<div class="max-w-3xl mx-auto
+            bg-white dark:bg-gray-800
+            rounded-xl shadow-lg dark:shadow-xl
+            p-6 mt-8
+            text-gray-900 dark:text-gray-100">
+    <h2 class="text-2xl font-bold mb-6 text-purple-700 dark:text-purple-300">
+        권한 계층 테스트
+    </h2>
 
-<div sec:authorize="isAuthenticated()">
-  <p><strong th:text="${'현재 사용자: ' + #authentication.name}"></strong></p>
-</div>
+    <!-- 인증 여부 표시 -->
+    <div sec:authorize="isAuthenticated()">
+        <p class="mb-2 font-semibold text-blue-800 dark:text-blue-300"
+           th:text="${'현재 사용자: ' + #authentication.name}"></p>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit"
+                    class="btn btn-sm btn-outline
+                               text-gray-700 dark:text-gray-200
+                               border-gray-400 dark:border-gray-600">
+                로그아웃
+            </button>
+        </form>
+    </div>
+    <div sec:authorize="isAnonymous()">
+        <p class="text-gray-700 dark:text-gray-300">
+            🔒 로그인하지 않았습니다.
+            <a th:href="@{/login}"
+               class="underline text-blue-600 dark:text-blue-400">
+                로그인 하러 가기
+            </a>
+        </p>
+    </div>
 
-<form th:action="@{/logout}" method="post">
-  <button type="submit">로그아웃</button>
-</form>
+    <!-- 권한 계층 안내 -->
+    <div class="space-y-2 mb-8">
+        <div sec:authorize="hasRole('ADMIN')" class="alert alert-info">
+            <i class="fa-solid fa-user-shield"></i>
+            <strong>ADMIN</strong> 권한이 있습니다.
+        </div>
+        <div sec:authorize="hasRole('TEACHER')" class="alert alert-success">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            <strong>TEACHER</strong> 권한이 있습니다.
+        </div>
+        <div sec:authorize="hasRole('MENTOR')" class="alert alert-warning">
+            <i class="fa-solid fa-user-graduate"></i>
+            <strong>MENTOR</strong> 권한이 있습니다.
+        </div>
+        <div sec:authorize="hasRole('STUDENT')" class="alert alert-primary">
+            <i class="fa-solid fa-user"></i>
+            <strong>STUDENT</strong> 권한이 있습니다.
+        </div>
+        <div sec:authorize="hasRole('MEMBER')" class="alert alert-secondary">
+            <i class="fa-solid fa-users"></i>
+            <strong>MEMBER</strong> 권한이 있습니다.
+        </div>
+    </div>
 
-<div sec:authorize="hasRole('ADMIN')">
-  <p>🔴 당신은 <strong>ADMIN</strong> 입니다. 모든 접근 권한이 있습니다.</p>
-</div>
-<div sec:authorize="hasRole('TEACHER')">
-  <p>🟠 당신은 <strong>TEACHER</strong> 권한이 있습니다.</p>
-</div>
-<div sec:authorize="hasRole('MENTOR')">
-  <p>🟡 당신은 <strong>MENTOR</strong> 권한이 있습니다.</p>
-</div>
-<div sec:authorize="hasRole('STUDENT')">
-  <p>🟢 당신은 <strong>STUDENT</strong> 권한이 있습니다.</p>
-</div>
-<div sec:authorize="hasRole('MEMBER')">
-  <p>🔵 당신은 <strong>MEMBER</strong> 권한이 있습니다.</p>
-</div>
+    <!-- 세션 정보 테이블 -->
+    <h3 class="font-bold text-lg text-gray-700 dark:text-gray-300 mb-2">
+        세션 객체 정보
+    </h3>
+    <div class="overflow-x-auto mb-8">
+        <table class="table w-full table-zebra">
+            <thead class="bg-gray-100 dark:bg-gray-700">
+            <tr>
+                <th class="text-gray-800 dark:text-gray-200">Attribute Name</th>
+                <th class="text-gray-800 dark:text-gray-200">Value (toString)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="entry : ${sessionAttributes}">
+                <td th:text="${entry.key}"></td>
+                <td th:text="${entry.value}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<div sec:authorize="isAnonymous()">
-  <p>🔒 로그인하지 않았습니다. <a th:href="@{/login}">로그인 하러 가기</a></p>
+    <!-- Principal 상세 정보 -->
+    <div th:if="${principalDetails != null}">
+        <h3 class="font-bold text-lg text-gray-700 dark:text-gray-300 mb-2">
+            Principal 상세 정보
+        </h3>
+        <ul class="list-disc pl-5 space-y-1">
+            <li class="text-gray-800 dark:text-gray-200">
+                <strong>Username:</strong>
+                <span th:text="${principalDetails.username}"></span>
+            </li>
+            <li class="text-gray-800 dark:text-gray-200">
+                <strong>Authorities:</strong>
+                <span th:each="auth : ${principalDetails.authorities}"
+                      th:text="${auth.authority}" class="mr-2"></span>
+            </li>
+            <li class="text-gray-800 dark:text-gray-200">
+                <strong>계정 만료:</strong>
+                <span th:text="${principalDetails.accountNonExpired}"></span>
+            </li>
+            <li class="text-gray-800 dark:text-gray-200">
+                <strong>계정 잠김:</strong>
+                <span th:text="${principalDetails.accountNonLocked}"></span>
+            </li>
+            <li class="text-gray-800 dark:text-gray-200">
+                <strong>자격증명 만료:</strong>
+                <span th:text="${principalDetails.credentialsNonExpired}"></span>
+            </li>
+            <li class="text-gray-800 dark:text-gray-200">
+                <strong>활성화 상태:</strong>
+                <span th:text="${principalDetails.enabled}"></span>
+            </li>
+        </ul>
+    </div>
 </div>
-
 </body>
 </html>
