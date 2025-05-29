@@ -29,8 +29,8 @@ mybatis:
     default-executor-type: reuse
 #    default-fetch-size: 1000
 #    call-setters-on-nulls: true
-#    jdbc-type-for-null: null
-    jdbc-type-for-null: varchar
+    jdbc-type-for-null: NULL
+#    jdbc-type-for-null: varchar
 
 logging:
   config: classpath:config/logback-spring.xml
@@ -69,10 +69,10 @@ mybatis:
     cache-enabled: false
     use-generated-keys: true
     default-executor-type: reuse
-    #    default-fetch-size: 1000
-    #    call-setters-on-nulls: true
-    #    jdbc-type-for-null: null
-    jdbc-type-for-null: varchar
+#    default-fetch-size: 1000
+#    call-setters-on-nulls: true
+    jdbc-type-for-null: NULL
+#    jdbc-type-for-null: varchar
 
 logging:
   config: classpath:config/logback-spring.xml

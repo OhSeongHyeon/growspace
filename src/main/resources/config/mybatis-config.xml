@@ -3,13 +3,14 @@
  
 <configuration>
     <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="cacheEnabled" value="false" />
         <setting name="useGeneratedKeys" value="true" />
         <setting name="defaultExecutorType" value="REUSE" />
         <!-- <setting name="defaultFetchSize" value="1000"/> -->
         <!-- <setting name="callSettersOnNulls" value="true"/> -->
-        <!-- <setting name="jdbcTypeForNull" value="NULL" /> -->
-        <setting name="jdbcTypeForNull" value="VARCHAR"/>
+        <setting name="jdbcTypeForNull" value="NULL" />
+        <!--<setting name="jdbcTypeForNull" value="VARCHAR"/>-->
     </settings>
     <typeAliases>
         <typeAlias alias="Integer" type="java.lang.Integer"/>
